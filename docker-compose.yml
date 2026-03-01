@@ -1,0 +1,165 @@
+# =============================================================================
+# auto-stack-monitor — Docker Compose
+# Zabbix + Grafana + PostgreSQL + Telegram Alerts
+# Maintainer: Samuel Miranda <vettahub.com.br>
+# =============================================================================
+
+version: "3.8"
+
+networks:
+  zbx_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+volumes:
+  postgres_data:
+  grafana_data:
+  zabbix_snmptraps:
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — banco de dados do Zabbix
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: zbx_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER:     ${POSTGRES_USER:-zabbix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      zbx_net:
+        ipv4_address: 172.20.0.10
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zabbix}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Zabbix Server
+  # ---------------------------------------------------------------------------
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:ubuntu-${ZABBIX_VERSION:-7.0-latest}
+    container_name: zbx_server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST:        172.20.0.10
+      POSTGRES_DB:           ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER:         ${POSTGRES_USER:-zabbix}
+      POSTGRES_PASSWORD:     ${POSTGRES_PASSWORD}
+      ZBX_STARTPOLLERS:      ${ZBX_STARTPOLLERS:-5}
+      ZBX_CACHESIZE:         ${ZBX_CACHESIZE:-128M}
+      ZBX_TIMEOUT:           ${ZBX_TIMEOUT:-30}
+      ZBX_HOUSEKEEPINGFREQUENCY: 1
+      ZBX_MAXHOUSEKEEPERDELETE:  5000
+    volumes:
+      - ./zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
+      - zabbix_snmptraps:/var/lib/zabbix/snmptraps
+    ports:
+      - "${ZBX_SERVER_PORT:-10051}:10051"
+    networks:
+      zbx_net:
+        ipv4_address: 172.20.0.11
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  # ---------------------------------------------------------------------------
+  # Zabbix Frontend (Nginx)
+  # ---------------------------------------------------------------------------
+  zabbix-frontend:
+    image: zabbix/zabbix-web-nginx-pgsql:ubuntu-${ZABBIX_VERSION:-7.0-latest}
+    container_name: zbx_frontend
+    restart: unless-stopped
+    depends_on:
+      - zabbix-server
+      - postgres
+    environment:
+      ZBX_SERVER_HOST:   172.20.0.11
+      ZBX_SERVER_PORT:   10051
+      DB_SERVER_HOST:    172.20.0.10
+      POSTGRES_DB:       ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER:     ${POSTGRES_USER:-zabbix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PHP_TZ:            ${TZ:-America/Bahia}
+      ZBX_SERVER_NAME:   ${ZBX_SERVER_NAME:-Auto-Stack Monitor}
+    ports:
+      - "${ZBX_FRONTEND_PORT:-8080}:8080"
+    networks:
+      zbx_net:
+        ipv4_address: 172.20.0.12
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Zabbix Agent 2 (monitora o próprio host Docker)
+  # ---------------------------------------------------------------------------
+  zabbix-agent:
+    image: zabbix/zabbix-agent2:ubuntu-${ZABBIX_VERSION:-7.0-latest}
+    container_name: zbx_agent
+    restart: unless-stopped
+    depends_on:
+      - zabbix-server
+    privileged: true
+    environment:
+      ZBX_SERVER_HOST:    172.20.0.11
+      ZBX_SERVER_PORT:    10051
+      ZBX_ACTIVESERVERS:  172.20.0.11:10051
+      ZBX_HOSTNAME:       ${DOCKER_HOST_NAME:-docker-host}
+      ZBX_METADATA:       docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+    ports:
+      - "${ZBX_AGENT_PORT:-10050}:10050"
+    networks:
+      zbx_net:
+        ipv4_address: 172.20.0.13
+
+  # ---------------------------------------------------------------------------
+  # Grafana
+  # ---------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: zbx_grafana
+    restart: unless-stopped
+    depends_on:
+      - zabbix-server
+    environment:
+      GF_SECURITY_ADMIN_USER:     ${GF_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+      GF_INSTALL_PLUGINS:         alexanderzobnin-zabbix-app
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: alexanderzobnin-zabbix-app
+      GF_SERVER_ROOT_URL:         http://localhost:${GF_PORT:-3000}
+      GF_SMTP_ENABLED:            "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      TZ:                         ${TZ:-America/Bahia}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "${GF_PORT:-3000}:3000"
+    networks:
+      zbx_net:
+        ipv4_address: 172.20.0.14
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

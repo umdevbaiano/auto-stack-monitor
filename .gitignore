@@ -1,0 +1,22 @@
+# Credenciais — NUNCA commitar
+.env
+
+# Dados locais
+data/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp

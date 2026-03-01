@@ -1,0 +1,17 @@
+# =============================================================================
+# grafana/provisioning/dashboards/dashboards.yml
+# Provisionamento automático de dashboards no primeiro boot
+# =============================================================================
+
+apiVersion: 1
+
+providers:
+  - name: "Auto-Stack Monitor"
+    orgId: 1
+    type: file
+    disableDeletion: false     # permite deletar dashboards via UI
+    updateIntervalSeconds: 30  # verifica novos arquivos a cada 30s
+    allowUiUpdates: true       # permite editar via UI e salvar
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: true  # subpastas viram folders no Grafana

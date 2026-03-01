@@ -1,0 +1,55 @@
+# =============================================================================
+# grafana/provisioning/datasources/zabbix.yml
+# Provisionamento automático do datasource Zabbix no Grafana
+# Plugin: alexanderzobnin-zabbix-app
+# =============================================================================
+
+apiVersion: 1
+
+datasources:
+  - name: Zabbix
+    type: alexanderzobnin-zabbix-datasource
+    access: proxy
+    isDefault: true
+    jsonData:
+      # URL do Zabbix API — usa nome do container Docker interno
+      url: http://zabbix-frontend:8080/api_jsonrpc.php
+
+      # Zabbix API credentials
+      username: Admin
+
+      # Configurações de cache e performance
+      cacheTtl: "1m"
+      alerting: true
+      addThresholds: false
+      alertingMinSeverity: 3      # 0=not classified, 1=info, 2=warning, 3=average, 4=high, 5=disaster
+      disableReadOnlyUsersAck: false
+
+      # Opções de trends (dados históricos)
+      useTrends: true
+      trendsFrom: "7d"
+      trendsRange: "4d"
+
+      # Regex para filtrar hosts/grupos (vazio = todos)
+      regexFilter: ""
+
+    # Senha via secureJsonData para não aparecer em logs
+    secureJsonData:
+      password: zabbix   # Será sobrescrito pela variável de ambiente se necessário
+
+    editable: true
+    version: 1
+
+  # ---------------------------------------------------------------------------
+  # Datasource alternativo somente-leitura (para dashboards públicos)
+  # ---------------------------------------------------------------------------
+  # - name: Zabbix (Read-Only)
+  #   type: alexanderzobnin-zabbix-datasource
+  #   access: proxy
+  #   jsonData:
+  #     url: http://zabbix-frontend:8080/api_jsonrpc.php
+  #     username: guest
+  #   secureJsonData:
+  #     password: ""
+  #   editable: false
+  #   version: 1

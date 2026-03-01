@@ -1,0 +1,194 @@
+{
+  "__inputs": [],
+  "__requires": [
+    { "type": "datasource", "id": "alexanderzobnin-zabbix-datasource", "name": "Zabbix", "version": "4.0.0" }
+  ],
+  "annotations": { "list": [] },
+  "description": "Visão geral de hosts Linux monitorados pelo Zabbix",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "green",  "index": 0, "text": "Online"  } }, "type": "value" },
+            { "options": { "1": { "color": "red",    "index": 1, "text": "Offline" } }, "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red",   "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "title": "Hosts com Problema",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "",
+            "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line",
+            "fillOpacity": 10, "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "smooth", "lineWidth": 2,
+            "pointSize": 5, "scaleDistribution": { "type": "linear" },
+            "showPoints": "never", "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 4, "y": 0 },
+      "id": 2,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "application": { "filter": "CPU" },
+          "countOutput": false,
+          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
+          "functions": [],
+          "group": { "filter": "Linux servers" },
+          "host": { "filter": "" },
+          "item": { "filter": "CPU utilization" },
+          "mode": 0,
+          "options": { "showDisabledItems": false, "skipEmptyValues": false },
+          "refId": "A",
+          "table": { "skipEmptyValues": false },
+          "triggers": { "acknowledged": 2, "count": true, "minSeverity": 3 }
+        }
+      ],
+      "title": "CPU Utilization — Linux Servers (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+            "lineInterpolation": "smooth", "lineWidth": 2,
+            "pointSize": 5, "showPoints": "never", "spanNulls": false
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "application": { "filter": "Memory" },
+          "group": { "filter": "Linux servers" },
+          "host": { "filter": "" },
+          "item": { "filter": "Available memory" },
+          "mode": 0,
+          "refId": "A",
+          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" }
+        }
+      ],
+      "title": "Memória Disponível — Linux Servers",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "bars", "fillOpacity": 80, "gradientMode": "none",
+            "lineWidth": 1, "showPoints": "never"
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "application": { "filter": "Network interfaces" },
+          "group": { "filter": "Linux servers" },
+          "host": { "filter": "" },
+          "item": { "filter": "/Bits received/" },
+          "mode": 0,
+          "refId": "A",
+          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" }
+        }
+      ],
+      "title": "Tráfego de Rede — Recebido",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "tags": ["zabbix", "linux", "auto-stack-monitor"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "DS_ZABBIX",
+        "options": [],
+        "query": "alexanderzobnin-zabbix-datasource",
+        "refresh": 1,
+        "type": "datasource",
+        "label": "Datasource Zabbix"
+      }
+    ]
+  },
+  "time": { "from": "now-3h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Linux Servers Overview",
+  "uid": "auto-stack-linux-overview",
+  "version": 1
+}
