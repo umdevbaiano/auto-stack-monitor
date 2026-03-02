@@ -1,0 +1,19 @@
+version: "3.8"
+
+networks:
+  zbx_net:
+    external: true
+    name: auto-stack-monitor_zbx_net
+
+services:
+  simulated-host:
+    image: zabbix/zabbix-agent2:ubuntu-7.0-latest
+    container_name: simulated_host_01
+    environment:
+      ZBX_SERVER_HOST: 172.20.0.11
+      ZBX_SERVER_PORT: 10051
+      ZBX_HOSTNAME: simulated-host-01
+    ports:
+      - "10052:10050"
+    networks:
+      - zbx_net

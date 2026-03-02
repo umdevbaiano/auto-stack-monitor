@@ -18,6 +18,7 @@ volumes:
   grafana_data:
   zabbix_snmptraps:
 
+
 services:
 
   # ---------------------------------------------------------------------------
@@ -28,8 +29,8 @@ services:
     container_name: zbx_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ${POSTGRES_DB:-zabbix}
-      POSTGRES_USER:     ${POSTGRES_USER:-zabbix}
+      POSTGRES_DB: ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER: ${POSTGRES_USER:-zabbix}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -37,7 +38,7 @@ services:
       zbx_net:
         ipv4_address: 172.20.0.10
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zabbix}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zabbix}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,15 +54,15 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DB_SERVER_HOST:        172.20.0.10
-      POSTGRES_DB:           ${POSTGRES_DB:-zabbix}
-      POSTGRES_USER:         ${POSTGRES_USER:-zabbix}
-      POSTGRES_PASSWORD:     ${POSTGRES_PASSWORD}
-      ZBX_STARTPOLLERS:      ${ZBX_STARTPOLLERS:-5}
-      ZBX_CACHESIZE:         ${ZBX_CACHESIZE:-128M}
-      ZBX_TIMEOUT:           ${ZBX_TIMEOUT:-30}
+      DB_SERVER_HOST: 172.20.0.10
+      POSTGRES_DB: ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER: ${POSTGRES_USER:-zabbix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ZBX_STARTPOLLERS: ${ZBX_STARTPOLLERS:-5}
+      ZBX_CACHESIZE: ${ZBX_CACHESIZE:-128M}
+      ZBX_TIMEOUT: ${ZBX_TIMEOUT:-30}
       ZBX_HOUSEKEEPINGFREQUENCY: 1
-      ZBX_MAXHOUSEKEEPERDELETE:  5000
+      ZBX_MAXHOUSEKEEPERDELETE: 5000
     volumes:
       - ./zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
       - zabbix_snmptraps:/var/lib/zabbix/snmptraps
@@ -87,21 +88,21 @@ services:
       - zabbix-server
       - postgres
     environment:
-      ZBX_SERVER_HOST:   172.20.0.11
-      ZBX_SERVER_PORT:   10051
-      DB_SERVER_HOST:    172.20.0.10
-      POSTGRES_DB:       ${POSTGRES_DB:-zabbix}
-      POSTGRES_USER:     ${POSTGRES_USER:-zabbix}
+      ZBX_SERVER_HOST: 172.20.0.11
+      ZBX_SERVER_PORT: 10051
+      DB_SERVER_HOST: 172.20.0.10
+      POSTGRES_DB: ${POSTGRES_DB:-zabbix}
+      POSTGRES_USER: ${POSTGRES_USER:-zabbix}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PHP_TZ:            ${TZ:-America/Bahia}
-      ZBX_SERVER_NAME:   ${ZBX_SERVER_NAME:-Auto-Stack Monitor}
+      PHP_TZ: ${TZ:-America/Bahia}
+      ZBX_SERVER_NAME: ${ZBX_SERVER_NAME:-Auto-Stack Monitor}
     ports:
       - "${ZBX_FRONTEND_PORT:-8080}:8080"
     networks:
       zbx_net:
         ipv4_address: 172.20.0.12
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -117,11 +118,10 @@ services:
       - zabbix-server
     privileged: true
     environment:
-      ZBX_SERVER_HOST:    172.20.0.11
-      ZBX_SERVER_PORT:    10051
-      ZBX_ACTIVESERVERS:  172.20.0.11:10051
-      ZBX_HOSTNAME:       ${DOCKER_HOST_NAME:-docker-host}
-      ZBX_METADATA:       docker
+      ZBX_SERVER_HOST: 172.20.0.11
+      ZBX_SERVER_PORT: 10051
+      ZBX_HOSTNAME: ${DOCKER_HOST_NAME:-docker-host}
+      ZBX_METADATA: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc:/proc:ro
@@ -142,14 +142,14 @@ services:
     depends_on:
       - zabbix-server
     environment:
-      GF_SECURITY_ADMIN_USER:     ${GF_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_USER: ${GF_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
-      GF_INSTALL_PLUGINS:         alexanderzobnin-zabbix-app
+      GF_INSTALL_PLUGINS: alexanderzobnin-zabbix-app
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: alexanderzobnin-zabbix-app
-      GF_SERVER_ROOT_URL:         http://localhost:${GF_PORT:-3000}
-      GF_SMTP_ENABLED:            "false"
+      GF_SERVER_ROOT_URL: http://localhost:${GF_PORT:-3000}
+      GF_SMTP_ENABLED: "false"
       GF_ANALYTICS_REPORTING_ENABLED: "false"
-      TZ:                         ${TZ:-America/Bahia}
+      TZ: ${TZ:-America/Bahia}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
@@ -159,7 +159,7 @@ services:
       zbx_net:
         ipv4_address: 172.20.0.14
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/api/health" ]
       interval: 30s
       timeout: 10s
       retries: 5

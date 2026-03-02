@@ -1,194 +1,824 @@
 {
-  "__inputs": [],
-  "__requires": [
-    { "type": "datasource", "id": "alexanderzobnin-zabbix-datasource", "name": "Zabbix", "version": "4.0.0" }
-  ],
-  "annotations": { "list": [] },
-  "description": "Visão geral de hosts Linux monitorados pelo Zabbix",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "id": null,
-  "links": [],
-  "liveNow": false,
-  "panels": [
-    {
-      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [
-            { "options": { "0": { "color": "green",  "index": 0, "text": "Online"  } }, "type": "value" },
-            { "options": { "1": { "color": "red",    "index": 1, "text": "Offline" } }, "type": "value" }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "red",   "value": 1 }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
-      "id": 1,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "auto"
-      },
-      "title": "Hosts com Problema",
-      "type": "stat"
-    },
-    {
-      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "",
-            "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line",
-            "fillOpacity": 10, "gradientMode": "none",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "lineInterpolation": "smooth", "lineWidth": 2,
-            "pointSize": 5, "scaleDistribution": { "type": "linear" },
-            "showPoints": "never", "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 70 },
-              { "color": "red", "value": 90 }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 4, "y": 0 },
-      "id": 2,
-      "options": {
-        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "none" }
-      },
-      "targets": [
+    "__inputs": [
         {
-          "application": { "filter": "CPU" },
-          "countOutput": false,
-          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
-          "functions": [],
-          "group": { "filter": "Linux servers" },
-          "host": { "filter": "" },
-          "item": { "filter": "CPU utilization" },
-          "mode": 0,
-          "options": { "showDisabledItems": false, "skipEmptyValues": false },
-          "refId": "A",
-          "table": { "skipEmptyValues": false },
-          "triggers": { "acknowledged": 2, "count": true, "minSeverity": 3 }
+            "name": "DS_ZABBIX",
+            "label": "Zabbix",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "alexanderzobnin-zabbix-datasource",
+            "pluginName": "Zabbix"
         }
-      ],
-      "title": "CPU Utilization — Linux Servers (%)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
-            "lineInterpolation": "smooth", "lineWidth": 2,
-            "pointSize": 5, "showPoints": "never", "spanNulls": false
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
-      "id": 3,
-      "options": {
-        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "none" }
-      },
-      "targets": [
+    ],
+    "__requires": [
         {
-          "application": { "filter": "Memory" },
-          "group": { "filter": "Linux servers" },
-          "host": { "filter": "" },
-          "item": { "filter": "Available memory" },
-          "mode": 0,
-          "refId": "A",
-          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" }
+            "type": "datasource",
+            "id": "alexanderzobnin-zabbix-datasource",
+            "name": "Zabbix",
+            "version": "4.2.0"
         }
-      ],
-      "title": "Memória Disponível — Linux Servers",
-      "type": "timeseries"
+    ],
+    "title": "Cluster Overview & Network (Premium)",
+    "uid": "cluster-premium",
+    "description": "UniFi/K8s Style Metrics",
+    "tags": [
+        "auto-stack-monitor",
+        "premium"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "refresh": "5s",
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "selected": true,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "alexanderzobnin-zabbix-datasource",
+                    "uid": "PA67C5EADE9207728"
+                },
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "group",
+                "options": [],
+                "query": "*",
+                "refresh": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "selected": true,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "alexanderzobnin-zabbix-datasource",
+                    "uid": "PA67C5EADE9207728"
+                },
+                "hide": 0,
+                "includeAll": true,
+                "multi": true,
+                "name": "host",
+                "options": [],
+                "query": "*",
+                "refresh": 1,
+                "type": "query"
+            }
+        ]
     },
-    {
-      "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "bars", "fillOpacity": 80, "gradientMode": "none",
-            "lineWidth": 1, "showPoints": "never"
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
-      "id": 4,
-      "options": {
-        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "none" }
-      },
-      "targets": [
+    "panels": [
         {
-          "application": { "filter": "Network interfaces" },
-          "group": { "filter": "Linux servers" },
-          "host": { "filter": "" },
-          "item": { "filter": "/Bits received/" },
-          "mode": 0,
-          "refId": "A",
-          "datasource": { "type": "alexanderzobnin-zabbix-datasource", "uid": "${DS_ZABBIX}" }
+            "id": 100,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "type": "row",
+            "title": "1. AT A GLANCE",
+            "collapsed": false,
+            "panels": []
+        },
+        {
+            "id": 1,
+            "title": "Hosts Online / Problem\u00e1ticos",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 0,
+                "y": 1
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/System uptime/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A",
+                    "functions": [
+                        {
+                            "def": {
+                                "category": "Alias",
+                                "defaultParams": [
+                                    ""
+                                ],
+                                "name": "setAlias",
+                                "params": [
+                                    {
+                                        "name": "alias",
+                                        "options": [],
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "params": [
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-GrYlRd"
+                    },
+                    "unit": "s",
+                    "mappings": [
+                        {
+                            "options": {
+                                "0": {
+                                    "color": "green",
+                                    "index": 0,
+                                    "text": "Online"
+                                },
+                                "1": {
+                                    "color": "red",
+                                    "index": 1,
+                                    "text": "Offline"
+                                }
+                            },
+                            "type": "value"
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 60
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none",
+                "textMode": "auto"
+            }
+        },
+        {
+            "id": 2,
+            "title": "CPU Core Utilization",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 4,
+                "w": 9,
+                "x": 6,
+                "y": 1
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/CPU utilization/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A",
+                    "functions": [
+                        {
+                            "def": {
+                                "category": "Alias",
+                                "defaultParams": [
+                                    ""
+                                ],
+                                "name": "setAlias",
+                                "params": [
+                                    {
+                                        "name": "alias",
+                                        "options": [],
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "params": [
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "semi-dark-green",
+                                "value": null
+                            },
+                            {
+                                "color": "orange",
+                                "value": 60
+                            },
+                            {
+                                "color": "red",
+                                "value": 85
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                }
+            },
+            "options": {
+                "displayMode": "lcd",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": [
+                        "mean"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 3,
+            "title": "Memory Consumption",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 4,
+                "w": 9,
+                "x": 15,
+                "y": 1
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Memory utilization/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A",
+                    "functions": [
+                        {
+                            "def": {
+                                "category": "Alias",
+                                "defaultParams": [
+                                    ""
+                                ],
+                                "name": "setAlias",
+                                "params": [
+                                    {
+                                        "name": "alias",
+                                        "options": [],
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "params": [
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "purple",
+                                "value": 75
+                            },
+                            {
+                                "color": "red",
+                                "value": 90
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                }
+            },
+            "options": {
+                "displayMode": "lcd",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 200,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 5
+            },
+            "type": "row",
+            "title": "2. DEEP PERFORMANCE & COMPUTE",
+            "collapsed": false,
+            "panels": []
+        },
+        {
+            "id": 4,
+            "title": "System Load Trends (1m, 5m, 15m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 6
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Load average.*/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "fillOpacity": 15,
+                        "lineWidth": 2,
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth"
+                    }
+                }
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 5,
+            "title": "Paging & Memory Exhaustion",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 6
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Memory utilization/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Free swap space in %/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "B"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "unit": "percent",
+                    "custom": {
+                        "fillOpacity": 10,
+                        "lineWidth": 2,
+                        "lineInterpolation": "smooth"
+                    }
+                }
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "lastNotNull",
+                        "mean"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 300,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 14
+            },
+            "type": "row",
+            "title": "3. STORAGE I/O & PROVISIONING",
+            "collapsed": false,
+            "panels": []
+        },
+        {
+            "id": 6,
+            "title": "Disk Read/Write Latency & Rate",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 15
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Space: (Total|Used)/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "unit": "Bps",
+                    "custom": {
+                        "fillOpacity": 5,
+                        "lineWidth": 2,
+                        "gradientMode": "opacity"
+                    }
+                }
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "calcs": [
+                        "max"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 7,
+            "title": "Volume Space Utilization (%)",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 15
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Space: Used, in %/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A",
+                    "functions": [
+                        {
+                            "def": {
+                                "category": "Alias",
+                                "defaultParams": [
+                                    ""
+                                ],
+                                "name": "setAlias",
+                                "params": [
+                                    {
+                                        "name": "alias",
+                                        "options": [],
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "params": [
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "max": 100,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "dark-green",
+                                "value": null
+                            },
+                            {
+                                "color": "dark-yellow",
+                                "value": 75
+                            },
+                            {
+                                "color": "dark-red",
+                                "value": 90
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                }
+            },
+            "options": {
+                "displayMode": "gradient",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 400,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 23
+            },
+            "type": "row",
+            "title": "4. NETWORK TRAFFIC & DROPS",
+            "collapsed": false,
+            "panels": []
+        },
+        {
+            "id": 8,
+            "title": "Throughput (RX/TX)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 18,
+                "x": 0,
+                "y": 24
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/Bits received/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A",
+                    "functions": [
+                        {
+                            "def": {
+                                "category": "Alias",
+                                "defaultParams": [
+                                    ""
+                                ],
+                                "name": "setAlias",
+                                "params": [
+                                    {
+                                        "name": "alias",
+                                        "options": [],
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "params": [
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "unit": "bps",
+                    "custom": {
+                        "fillOpacity": 15,
+                        "lineWidth": 2,
+                        "drawStyle": "line",
+                        "lineInterpolation": "stepAfter"
+                    }
+                }
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "calcs": [
+                        "mean",
+                        "max"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 9,
+            "title": "Interface Errors/Drops",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 18,
+                "y": 24
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "alexanderzobnin-zabbix-datasource",
+                        "uid": "PA67C5EADE9207728"
+                    },
+                    "group": {
+                        "filter": "/.*/"
+                    },
+                    "host": {
+                        "filter": "/.*/"
+                    },
+                    "item": {
+                        "filter": "/(errors|discarded)/"
+                    },
+                    "options": {
+                        "showDisabledItems": false,
+                        "skipEmptyValues": false
+                    },
+                    "mode": 0,
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "unit": "pps",
+                    "custom": {
+                        "fillOpacity": 60,
+                        "lineWidth": 1,
+                        "drawStyle": "bars"
+                    }
+                }
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "hidden"
+                }
+            }
         }
-      ],
-      "title": "Tráfego de Rede — Recebido",
-      "type": "timeseries"
-    }
-  ],
-  "refresh": "1m",
-  "schemaVersion": 38,
-  "tags": ["zabbix", "linux", "auto-stack-monitor"],
-  "templating": {
-    "list": [
-      {
-        "current": {},
-        "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "DS_ZABBIX",
-        "options": [],
-        "query": "alexanderzobnin-zabbix-datasource",
-        "refresh": 1,
-        "type": "datasource",
-        "label": "Datasource Zabbix"
-      }
     ]
-  },
-  "time": { "from": "now-3h", "to": "now" },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Linux Servers Overview",
-  "uid": "auto-stack-linux-overview",
-  "version": 1
 }

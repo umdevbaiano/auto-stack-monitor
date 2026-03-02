@@ -61,26 +61,47 @@ def get_emoji(subject: str) -> str:
 
 def format_message(subject: str, body: str) -> str:
     """
-    Formata a mensagem em HTML para o Telegram.
-    Zabbix envia macros expandidas no subject e body.
+    Formata a mensagem em HTML para o Telegram com visual avançado NOC.
     """
     emoji = get_emoji(subject)
     now   = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    # Escapa caracteres HTML básicos no body
-    body_escaped = (
-        body
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
+    def escape_html(t: str) -> str:
+        return t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    subject_esc = escape_html(subject)
+    
+    formatted_body = []
+    for line in body.splitlines():
+        line_esc = escape_html(line)
+        # Destacar keywords que o Zabbix comumente envia
+        if line_esc.startswith("Host:") or line_esc.startswith("Servidor:"):
+            formatted_body.append(f"🖥️ <b>{line_esc}</b>")
+        elif line_esc.startswith("Severity:") or line_esc.startswith("Severidade:"):
+            formatted_body.append(f"⚠️ <b>{line_esc}</b>")
+        elif line_esc.startswith("Problem started") or line_esc.startswith("Problema iniciado"):
+            formatted_body.append(f"🕒 <i>{line_esc}</i>")
+        elif line_esc.startswith("Problem name:") or line_esc.startswith("Problema:"):
+            formatted_body.append(f"🎯 <b>{line_esc}</b>")
+        elif line_esc.startswith("Event ID:"):
+            formatted_body.append(f"🏷️ <code>{line_esc}</code>")
+        else:
+            formatted_body.append(line_esc)
+
+    body_final = "\n".join(formatted_body)
+    
+    links = (
+        '🔗 <a href="http://localhost:3000/dashboards">Grafana Dashboards</a> | '
+        '<a href="http://localhost:8080/zabbix.php?action=problem.view">Zabbix Problems</a>'
     )
 
     return (
-        f"{emoji} <b>{subject}</b>\n"
+        f"{emoji} <b>{subject_esc}</b>\n"
         f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"{body_escaped}\n"
+        f"{body_final}\n"
         f"━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🕐 {now} | Auto-Stack Monitor"
+        f"{links}\n"
+        f"🕐 <i>{now} | Auto-Stack Monitor NOC</i>"
     )
 
 

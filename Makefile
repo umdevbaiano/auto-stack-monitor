@@ -13,7 +13,7 @@ help:
 	@echo ""
 	@echo "  auto-stack-monitor — Comandos disponíveis:"
 	@echo ""
-	@echo "  make up          → Sobe o stack completo (executa setup.sh)"
+	@echo "  make up          → Sobe o stack completo (após o onboarding)"
 	@echo "  make start       → Sobe containers sem setup interativo"
 	@echo "  make down        → Para e remove containers"
 	@echo "  make restart     → Reinicia todos os serviços"
@@ -21,16 +21,17 @@ help:
 	@echo "  make logs-zbx    → Logs apenas do Zabbix Server"
 	@echo "  make logs-gf     → Logs apenas do Grafana"
 	@echo "  make status      → Status dos containers"
-	@echo "  make setup       → Executa apenas o setup.sh"
+	@echo "  make onboarding  → Executa a TUI interativa de setup (Python)"
 	@echo "  make clean       → Remove containers e imagens (preserva volumes)"
 	@echo "  make hard-reset  → ⚠ Remove TUDO incluindo volumes (dados perdidos)"
 	@echo "  make test-tg     → Envia mensagem de teste ao Telegram"
+	@echo "  make simulate    → 🧪 Simula um host linux com pico de CPU (NOC Test)"
 	@echo "  make env         → Cria .env a partir de .env.example"
 	@echo ""
 
 # ── Setup completo ────────────────────────────────────────────────────────
-up: env
-	@bash setup.sh
+up: env onboarding
+	$(COMPOSE) up -d
 
 # ── Subir sem setup interativo ────────────────────────────────────────────
 start: env
@@ -62,8 +63,9 @@ status:
 	$(COMPOSE) ps
 
 # ── Setup isolado ─────────────────────────────────────────────────────────
-setup:
-	@bash setup.sh
+onboarding:
+	@pip install -r requirements.txt > /dev/null 2>&1
+	@python onboarding.py
 
 # ── Criar .env ────────────────────────────────────────────────────────────
 env:
@@ -94,3 +96,18 @@ test-tg:
 	  -d "parse_mode=HTML" \
 	  -d "text=🧪 <b>Teste Auto-Stack Monitor</b>%0AMensagem de teste enviada via Makefile." \
 	| python3 -c "import sys,json; r=json.load(sys.stdin); print('✔ Enviado!' if r.get('ok') else '✘ Erro: '+str(r))"
+
+# ── Simulação NOC (Teste em Alta Escala) ──────────────────────────────────
+simulate:
+	@echo "🧪 Subindo host simulado (simulated-host-01) injetando carga..."
+	$(COMPOSE) -f docker-compose-simulator.yml up -d
+	@echo "⏳ Espalhando telemetria..."
+	@sleep 5
+	@docker cp simulate_noc.sh simulated_host_01:/tmp/simulate_noc.sh
+	@docker exec -d simulated_host_01 bash /tmp/simulate_noc.sh
+	@echo "✔ Chaos Engineering iniciado! Acesse o Novo Grafana (Linux Overview / Network) para verificar a plotagem sistêmica de CPU, RAM, IOPS e Rede."
+
+simulate-stop:
+	@echo "🛑 Encerrando tráfego de teste..."
+	$(COMPOSE) -f docker-compose-simulator.yml down
+	@echo "✔ Testes desligados com sucesso."
