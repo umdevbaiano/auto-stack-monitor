@@ -124,7 +124,7 @@ def section_profile(env_vars):
         console.print(f"  [bold cyan]{k}.[/bold cyan] {v}")
     
     console.print()
-    choice = Prompt.ask("Qual template se encaixa no seu parque atual?", choices=["1", "2", "3", "4"], default="2")
+    choice = Prompt.ask("Qual template se encaixa no seu uso atual?", choices=["1", "2", "3", "4"], default="2")
     
     env_vars["MONITOR_PROFILE"] = choice
     
