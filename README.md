@@ -38,7 +38,7 @@ O **Auto-Stack Monitor** é uma solução de infraestrutura como código (IaC) f
 ![Telegram Alerts](https://github.com/user-attachments/assets/010d1c96-a70a-456a-918d-22073f2767ff)
 
 ### Onboarding Interativo
-![Onboarding Interativo](https://github.com/user-attachments/assets/d741270f-4cfe-4b6b-b89b-fe2038bf2ce2)
+![Onboarding Interativo](https://github.com/user-attachments/assets/101bc804-3252-43c9-90f3-7d3a74e083a4)
 
 ### ✅ Projeto Pronto para Rodar
 ![Ready to Run](https://github.com/user-attachments/assets/7f006dd3-a055-456b-aa7b-168d05743799)
