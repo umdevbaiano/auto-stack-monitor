@@ -34,14 +34,14 @@ O **Auto-Stack Monitor** é uma solução de infraestrutura como código (IaC) f
 ### 🖥️ Cluster Overview & Network
 ![Cluster Overview](https://github.com/user-attachments/assets/bfcc4cce-0435-4638-b976-b22ba243f5c1)
 
-### 📊 Deep Performance & Compute
-![Deep Performance](https://github.com/user-attachments/assets/010d1c96-a70a-456a-918d-22073f2767ff)
-
 ### 📲 Alertas Telegram em Tempo Real
-![Telegram Alerts](https://github.com/user-attachments/assets/d741270f-4cfe-4b6b-b89b-fe2038bf2ce2)
+![Telegram Alerts](https://github.com/user-attachments/assets/010d1c96-a70a-456a-918d-22073f2767ff)
 
-### 🗂️ Dashboards Disponíveis
-![Dashboards](https://github.com/user-attachments/assets/7f006dd3-a055-456b-aa7b-168d05743799)
+### Onboarding Interativo
+![Onboarding Interativo](https://github.com/user-attachments/assets/d741270f-4cfe-4b6b-b89b-fe2038bf2ce2)
+
+### ✅ Projeto Pronto para Rodar
+![Ready to Run](https://github.com/user-attachments/assets/7f006dd3-a055-456b-aa7b-168d05743799)
 
 ---
 
