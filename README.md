@@ -31,7 +31,7 @@ O **Auto-Stack Monitor** é uma solução de infraestrutura como código (IaC) f
 
 ## 📸 Screenshots
 
-### 🖥️ Cluster Overview & Network (Premium)
+### 🖥️ Cluster Overview & Network
 ![Cluster Overview](https://github.com/user-attachments/assets/bfcc4cce-0435-4638-b976-b22ba243f5c1)
 
 ### 📊 Deep Performance & Compute
